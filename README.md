@@ -1,24 +1,27 @@
-📊 Projeto Integrador: Análise de Desempenho (Baseline)
-Este repositório contém o desenvolvimento da Fase I do Projeto Integrador, focado na criação de uma base experimental para análise de algoritmos de busca sequencial.
+# 📊 Projeto Integrador: Análise de Desempenho (Baseline)
 
-Status do Projeto: 🛠️ Em desenvolvimento (Fase de Modelagem e Carga)
+Este repositório contém o desenvolvimento da **Fase I** do Projeto Integrador, focado na criação de uma base experimental para análise de algoritmos de busca sequencial.
 
-📌 Cronograma de Desenvolvimento
-[x] Planejamento da estrutura de dados.
-[/] Implementação da leitura de CSV (Em andamento).
-[ ] Implementação da busca sequencial.
-[ ] Protocolo de testes de performance (Mín. 1.000 buscas).
-[ ] Relatório técnico final.
+> **Status do Projeto:** 🛠️ Em desenvolvimento (Fase de Modelagem e Carga) 
 
-📦 Modelagem de Dados
+## 📌 Cronograma de Desenvolvimento
+- [x] Planejamento da estrutura de dados.
+- [ ] Implementação da leitura de CSV (Em andamento).
+- [ ] Implementação da busca sequencial.
+- [ ] Protocolo de testes de performance (Mín. 1.000 buscas).
+- [ ] Relatório técnico final.
+
+## 📦 Modelagem de Dados
 Para esta etapa inicial, estamos utilizando a seguinte estrutura para representar os produtos do dataset:
 
+```c
 typedef struct {
     int id;
     char nome[51];
     char categoria[31];
     float valor;
-    } Produto;
+} Produto;
+```
 
 🛠️ Tecnologias e Ferramentas
 
@@ -35,6 +38,7 @@ O projeto seguirá um protocolo rigoroso de testes:
 3. Testes em diferentes cenários: início, meio, fim e elementos inexistentes.
 
 🚀 Como Compilar (Versão Atual)
-
+```c
 gcc main.c -o pi_fase1
 ./pi_fase1
+```
