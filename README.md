@@ -18,7 +18,7 @@ typedef struct {
     char nome[51];
     char categoria[31];
     float valor;
-} Produto;
+    } Produto;
 
 🛠️ Tecnologias e Ferramentas
 
