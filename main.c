@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h> // Essencial para a Telemetria (medir o tempo das buscas)
+#include <time.h> // Issue: Implementação do Timer (Telemetria)
 
 // ==========================================================
 // --- Issue #1: Definição da Estrutura de Dados (TAD) ---
@@ -14,7 +14,7 @@ typedef struct {
 } Produto;
 
 // ==========================================================
-// --- Issue #3: Contagem para Alocação Dinâmica ---
+// --- Issue #2: Contagem para Alocação Dinâmica ---
 // ==========================================================
 int contar_total_registros(const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "r");
@@ -39,7 +39,7 @@ int contar_total_registros(const char *nomeArquivo) {
 }
 
 // ==========================================================
-// --- Issue #2: Leitura e Carga do Arquivo CSV ---
+// --- Issue #3: Leitura e Carga do Arquivo CSV ---
 // ==========================================================
 void carregar_dataset(const char *nomeArquivo, Produto *vetor, int total) {
     FILE *arquivo = fopen(nomeArquivo, "r");
@@ -60,7 +60,7 @@ void carregar_dataset(const char *nomeArquivo, Produto *vetor, int total) {
 }
 
 // ==========================================================
-// --- Telemetria: Busca Sequencial (Base de Comparação) ---
+// --- Issue #4: Implementação da Busca Sequencial ---
 // ==========================================================
 int busca_sequencial(Produto *vetor, int total, int id_buscado, int *iteracoes) {
     *iteracoes = 0;
@@ -74,8 +74,7 @@ int busca_sequencial(Produto *vetor, int total, int id_buscado, int *iteracoes) 
 }
 
 // ==========================================================
-// --- Pré-requisito Issue #7: Algoritmo de Ordenação ---
-// O vetor precisa estar ordenado para a Busca Binária funcionar.
+// --- Issue #5: Ordenação do Vetor (QuickSort) ---
 // ==========================================================
 void trocar(Produto *a, Produto *b) {
     Produto temp = *a;
@@ -105,7 +104,7 @@ void quicksort(Produto *vetor, int inicio, int fim) {
 }
 
 // ==========================================================
-// --- Issue #7: Implementação da Busca Binária ---
+// --- Issue #6: Implementação da Busca Binária ---
 // ==========================================================
 int busca_binaria(Produto *vetor, int total, int id_buscado, int *iteracoes) {
     int inicio = 0;
@@ -129,11 +128,10 @@ int busca_binaria(Produto *vetor, int total, int id_buscado, int *iteracoes) {
 }
 
 // ==========================================================
-// --- Issue #8: Impressão de Produtos em Ordem ---
+// --- Issue #7: Impressão de Produtos em Ordem ---
 // ==========================================================
 void imprimir_em_ordem(Produto *vetor, int total) {
     printf("\n--- Listagem de Produtos (Ordenados por ID) ---\n");
-    // Limitando a 50 para não estourar a tela do terminal, mas pode ajustar
     int limite = (total < 50) ? total : 50; 
     for (int i = 0; i < limite; i++) {
         printf("ID: %06d | %-35s | R$ %8.2f\n", 
@@ -146,7 +144,7 @@ void imprimir_em_ordem(Produto *vetor, int total) {
 }
 
 // ==========================================================
-// --- MAIN: Ponto de Entrada e Issue #9 (Menu) ---
+// --- Issue #8: Menu Interativo e Ponto de Entrada ---
 // ==========================================================
 int main() {
     const char *path = "dataset4.csv"; 
@@ -172,29 +170,26 @@ int main() {
     carregar_dataset(path, meuVetor, total);
     printf("[SISTEMA] %d registros carregados com sucesso.\n", total);
     
+    // Automatização do preparo (Issue #5)
     printf("[SISTEMA] Ordenando base de dados (QuickSort)...\n");
     quicksort(meuVetor, 0, total - 1);
     printf("[SISTEMA] Base ordenada. Pronto para buscas!\n");
 
-    // Variáveis para o Menu e Telemetria
     int opcao = 0;
     int id_busca, indice, iteracoes;
     clock_t inicio_tempo, fim_tempo;
     double tempo_gasto;
 
-    // ==========================================================
-    // --- Issue #9: Criação do Menu Interativo ---
-    // ==========================================================
     while (opcao != 4) {
         printf("\n================ MENU PRINCIPAL ================\n");
-        printf("1. Buscar Produto (Busca Sequencial - O(n))\n");
-        printf("2. Buscar Produto (Busca Binaria - O(log n))\n");
-        printf("3. Imprimir Produtos em Ordem (Issue #8)\n");
+        printf("1. Buscar Produto (Busca Sequencial)\n");
+        printf("2. Buscar Produto (Busca Binaria)\n");
+        printf("3. Imprimir Produtos em Ordem\n");
         printf("4. Sair do Sistema\n");
         printf("Escolha uma opcao: ");
         
         if (scanf("%d", &opcao) != 1) {
-            while(getchar() != '\n'); // Limpa buffer
+            while(getchar() != '\n'); 
             continue;
         }
 
