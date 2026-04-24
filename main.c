@@ -193,13 +193,13 @@ void imprimir_em_ordem(Produto *vetor, int total) {
 // --- Issue #8: Menu Interativo e Ponto de Entrada ---
 // ==========================================================
 int main() {
-    const char *path = "dataset4.csv"; 
+    const char *path = "dataset4.csv";  
     
     printf("==================================================\n");
     printf("    PROJETO INTEGRADOR: ESTRUTURAS DE DADOS\n");
     printf("==================================================\n");
     
-    printf("[SISTEMA] Iniciando Fase de Carga...\n");
+    printf("[SISTEMA] Iniciando Fase de Carga...\n"); 
 
     int total = contar_total_registros(path);
     if (total <= 0) {
