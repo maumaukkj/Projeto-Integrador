@@ -39,23 +39,69 @@ int contar_total_registros(const char *nomeArquivo) {
 }
 
 // ==========================================================
-// --- Issue #3: Leitura e Carga do Arquivo CSV ---
+// --- Issue #3: Leitura e Carga do Arquivo CSV --- 
 // ==========================================================
 void carregar_dataset(const char *nomeArquivo, Produto *vetor, int total) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) return; 
 
     char buffer[1024];
-    fgets(buffer, sizeof(buffer), arquivo);
+    fgets(buffer, sizeof(buffer), arquivo); // Pula cabeçalho
 
     for (int i = 0; i < total; i++) {
-        fscanf(arquivo, "%d,%[^,],%[^,],%f\n", 
-               &vetor[i].id, 
-               vetor[i].nome, 
-               vetor[i].categoria, 
-               &vetor[i].valor);
-    }
+        if (fgets(buffer, sizeof(buffer), arquivo)) {
+            
+            // 1. Limpa quebras de linha invisíveis
+            buffer[strcspn(buffer, "\r")] = '\0';
+            buffer[strcspn(buffer, "\n")] = '\0';
+            
+            // Professor, só um comentário meu aqui... Que dificuldade pra conseguir pegar o valor correto de todos os produtos ein... Tive que pedir ajuda pois não consegui resolver só.
 
+
+            // ====================================================
+            // PASSO 1: Pega o Preço pela ÚLTIMA vírgula da linha
+            // ====================================================
+            char *virgula_preco = strrchr(buffer, ','); 
+            if (virgula_preco) {
+                vetor[i].valor = atof(virgula_preco + 1); // Lê o número
+                *virgula_preco = '\0'; // Corta a string aqui. Sobrou "ID,Nome,Categoria"
+            }
+
+            // ====================================================
+            // PASSO 2: Pega o ID pela PRIMEIRA vírgula da linha
+            // ====================================================
+            char *virgula_id = strchr(buffer, ',');
+            if (virgula_id) {
+                *virgula_id = '\0'; // Corta a string aqui
+                vetor[i].id = atoi(buffer); // O que sobrou no início é o ID
+                
+                // ====================================================
+                // PASSO 3: Pega o Nome pela PRÓXIMA vírgula
+                // ====================================================
+                char *inicio_nome = virgula_id + 1; // O nome começa logo após a vírgula do ID
+                char *virgula_nome = strchr(inicio_nome, ','); // Acha a vírgula depois do nome
+                
+                if (virgula_nome) {
+                    *virgula_nome = '\0'; // Corta a string
+                    strcpy(vetor[i].nome, inicio_nome);
+                    
+                    // ====================================================
+                    // PASSO 4: O que sobrou é a Categoria!
+                    // ====================================================
+                    char *inicio_categoria = virgula_nome + 1;
+                    
+                    // Um "Lava Jato" rápido para tirar as aspas se elas existirem
+                    int len = strlen(inicio_categoria);
+                    if (inicio_categoria[0] == '"' && inicio_categoria[len-1] == '"') {
+                        inicio_categoria[len-1] = '\0'; // Tira a última aspa
+                        strcpy(vetor[i].categoria, inicio_categoria + 1); // Copia pulando a primeira
+                    } else {
+                        strcpy(vetor[i].categoria, inicio_categoria);
+                    }
+                }
+            }
+        }
+    }
     fclose(arquivo);
 }
 
@@ -180,12 +226,11 @@ int main() {
     clock_t inicio_tempo, fim_tempo;
     double tempo_gasto;
 
-    while (opcao != 4) {
+    while (opcao != 2) {
         printf("\n================ MENU PRINCIPAL ================\n");
-        printf("1. Buscar Produto (Busca Sequencial)\n");
-        printf("2. Buscar Produto (Busca Binaria)\n");
-        printf("3. Imprimir Produtos em Ordem\n");
-        printf("4. Sair do Sistema\n");
+        printf("0. Executar Protocolo Oficial (3 Ciclos)\n");
+        printf("1. Buscar Produto (Busca Sequencial - Manual)\n");
+        printf("2. Sair do Sistema\n");
         printf("Escolha uma opcao: ");
         
         if (scanf("%d", &opcao) != 1) {
@@ -194,6 +239,88 @@ int main() {
         }
 
         switch (opcao) {
+            case 0:
+                printf("\n[SISTEMA] Iniciando Protocolo Oficial (3 Ciclos de 1000 IDs distintos)...\n");
+                printf("[SISTEMA] Gerando 'alvos_fase1.txt' para o proximo bimestre...\n");
+
+                FILE *flog = fopen("alvos_fase1.txt", "w");
+                if (!flog) {
+                    printf("[ERRO] Nao foi possivel criar o arquivo de log.\n");
+                    break;
+                }
+
+                // Definição dos índices para os 1000 IDs (divididos em 3 blocos)
+                int idx_inicio = 0;
+                int idx_meio = total / 2;
+                int idx_fim = total - 334;
+
+                double t_inicio[3], t_meio[3], t_fim[3];
+
+                for (int rep = 0; rep < 3; rep++) {
+                    // --- BLOCO INICIO (333 IDs) ---
+                    inicio_tempo = clock();
+                    for(int k = 0; k < 333; k++) {
+                        if (rep == 0) fprintf(flog, "%d\n", meuVetor[idx_inicio + k].id);
+                        busca_sequencial(meuVetor, total, meuVetor[idx_inicio + k].id, &iteracoes);
+                    }
+                    fim_tempo = clock();
+                    t_inicio[rep] = ((double)(fim_tempo - inicio_tempo)) / CLOCKS_PER_SEC;
+
+                    // --- BLOCO MEIO (333 IDs) ---
+                    inicio_tempo = clock();
+                    for(int k = 0; k < 333; k++) {
+                        if (rep == 0) fprintf(flog, "%d\n", meuVetor[idx_meio + k].id);
+                        busca_sequencial(meuVetor, total, meuVetor[idx_meio + k].id, &iteracoes);
+                    }
+                    fim_tempo = clock();
+                    t_meio[rep] = ((double)(fim_tempo - inicio_tempo)) / CLOCKS_PER_SEC;
+
+                    // --- BLOCO FIM (334 IDs) ---
+                    inicio_tempo = clock();
+                    for(int k = 0; k < 334; k++) {
+                        if (rep == 0) fprintf(flog, "%d\n", meuVetor[idx_fim + k].id);
+                        busca_sequencial(meuVetor, total, meuVetor[idx_fim + k].id, &iteracoes);
+                    }
+                    fim_tempo = clock();
+                    t_fim[rep] = ((double)(fim_tempo - inicio_tempo)) / CLOCKS_PER_SEC;
+                }
+                fclose(flog);
+
+                // Médias de cada cenário
+                double m_inicio = (t_inicio[0] + t_inicio[1] + t_inicio[2]) / 3.0;
+                double m_meio = (t_meio[0] + t_meio[1] + t_meio[2]) / 3.0;
+                double m_fim = (t_fim[0] + t_fim[1] + t_fim[2]) / 3.0;
+
+                // Médias Gerais por Ciclo (Colunas)
+                double m_rep1 = (t_inicio[0] + t_meio[0] + t_fim[0]) / 3.0;
+                double m_rep2 = (t_inicio[1] + t_meio[1] + t_fim[1]) / 3.0;
+                double m_rep3 = (t_inicio[2] + t_meio[2] + t_fim[2]) / 3.0;
+                double m_final = (m_inicio + m_meio + m_fim) / 3.0;
+
+                // --- TABELA 1: MÉTRICAS POR REPETIÇÃO ---
+                printf("\n======================== RESULTADOS DO PROTOCOLO (3 CICLOS) ========================\n");
+                printf("Registros: %d | Total de Alvos Distintos: 1000\n", total);
+                printf("------------------------------------------------------------------------------------\n");
+                printf("%-15s | %-10s | %-10s | %-10s | %-15s\n", "Cenario", "Rep 1 (s)", "Rep 2 (s)", "Rep 3 (s)", "Media Final (s)");
+                printf("------------------------------------------------------------------------------------\n");
+                printf("%-15s | %-10.4f | %-10.4f | %-10.4f | %-15.4f\n", "Busca Inicio", t_inicio[0], t_inicio[1], t_inicio[2], m_inicio);
+                printf("%-15s | %-10.4f | %-10.4f | %-10.4f | %-15.4f\n", "Busca Meio", t_meio[0], t_meio[1], t_meio[2], m_meio);
+                printf("%-15s | %-10.4f | %-10.4f | %-10.4f | %-15.4f\n", "Busca Fim", t_fim[0], t_fim[1], t_fim[2], m_fim);
+                printf("------------------------------------------------------------------------------------\n");
+                printf("%-15s | %-10.4f | %-10.4f | %-10.4f | %-15.4f\n", "Media Ciclo", m_rep1, m_rep2, m_rep3, m_final);
+                printf("====================================================================================\n\n");
+
+                // --- TABELA 2: MÉDIAS UNITÁRIAS (A "MÉDIA DAS MÉDIAS") ---
+                printf(">>> TEMPO UNITARIO PROCESSADO (Desempenho por busca individual) <<<\n");
+                printf("------------------------------------------------------------------------------------\n");
+                printf("%-15s | %-12s | %-12s | %-12s | %-15s\n", "Cenario", "Rep 1 (s)", "Rep 2 (s)", "Rep 3 (s)", "Media Unitaria");
+                printf("------------------------------------------------------------------------------------\n");
+                printf("%-15s | %-12.8f | %-12.8f | %-12.8f | %-15.8f\n", "Media Inicio", t_inicio[0]/333, t_inicio[1]/333, t_inicio[2]/333, m_inicio/333);
+                printf("%-15s | %-12.8f | %-12.8f | %-12.8f | %-15.8f\n", "Media Meio", t_meio[0]/333, t_meio[1]/333, t_meio[2]/333, m_meio/333);
+                printf("%-15s | %-12.8f | %-12.8f | %-12.8f | %-15.8f\n", "Media Fim", t_fim[0]/334, t_fim[1]/334, t_fim[2]/334, m_fim/334);
+                printf("------------------------------------------------------------------------------------\n");
+                break;
+
             case 1:
                 printf("\nDigite o ID para Busca SEQUENCIAL: ");
                 scanf("%d", &id_busca);
@@ -214,29 +341,6 @@ int main() {
                 break;
 
             case 2:
-                printf("\nDigite o ID para Busca BINARIA: ");
-                scanf("%d", &id_busca);
-                
-                inicio_tempo = clock();
-                indice = busca_binaria(meuVetor, total, id_busca, &iteracoes);
-                fim_tempo = clock();
-                
-                tempo_gasto = ((double)(fim_tempo - inicio_tempo)) / CLOCKS_PER_SEC;
-
-                if (indice != -1) {
-                    printf("\n[ENCONTRADO] %s | Categoria: %s | R$ %.2f\n", 
-                           meuVetor[indice].nome, meuVetor[indice].categoria, meuVetor[indice].valor);
-                } else {
-                    printf("\n[FALHA] Produto ID %d nao localizado.\n", id_busca);
-                }
-                printf(">>> TELEMETRIA: %d iteracoes | Tempo: %f segundos\n", iteracoes, tempo_gasto);
-                break;
-
-            case 3:
-                imprimir_em_ordem(meuVetor, total);
-                break;
-
-            case 4:
                 printf("\n[SISTEMA] Liberando memoria e encerrando... Ate logo!\n");
                 break;
 
