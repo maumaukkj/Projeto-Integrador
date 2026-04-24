@@ -6,10 +6,10 @@ Este repositório contém o desenvolvimento da **Fase I** do Projeto Integrador,
 
 ## 📌 Cronograma de Desenvolvimento
 - [x] Planejamento da estrutura de dados.
-- [ ] Implementação da leitura de CSV (Em andamento).
-- [ ] Implementação da busca sequencial.
-- [ ] Protocolo de testes de performance (Mín. 1.000 buscas).
-- [ ] Relatório técnico final.
+- [x] Implementação da leitura de CSV (Em andamento).
+- [x] Implementação da busca sequencial.
+- [x] Protocolo de testes de performance (Mín. 1.000 buscas).
+- [x] Relatório técnico final.
 
 ## 📦 Modelagem de Dados
 Para esta etapa inicial, estamos utilizando a seguinte estrutura para representar os produtos do dataset:
@@ -39,6 +39,6 @@ O projeto seguirá um protocolo rigoroso de testes:
 
 🚀 Como Compilar (Versão Atual)
 ```c
-gcc main.c -o pi_fase1
-./pi_fase1
+gcc main.c -o projeto
+./projeto
 ```
