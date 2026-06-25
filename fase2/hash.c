@@ -8,9 +8,21 @@ void inicializarTabela(HashTable* ht) {
     ht->total_colisoes = 0;
 }
 
-// Função Hash provisória (Método da Divisão)
+// Função Hash: Meio do Quadrado Simplificado (Mid-Square)
 int funcaoHash(int id) {
-    return id % TABLE_SIZE;
+    // 1. Cast para long long para evitar Overflow na multiplicação
+    long long quadrado = (long long)id * id;
+    
+    // 2. Aplica a fórmula da equipe: (x * x / 100) % m
+    // O m é o nosso TABLE_SIZE (400010)
+    int indice = (int)((quadrado / 100) % TABLE_SIZE);
+    
+    // 3. Blindagem extra: garantir que o índice gerado seja sempre positivo
+    if (indice < 0) {
+        indice += TABLE_SIZE;
+    }
+    
+    return indice;
 }
 
 // Esboço da função de inserção com tratamento de colisão por encadeamento
