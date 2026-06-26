@@ -1,4 +1,4 @@
-# 📊 Projeto Integrador: Análise de Desempenho (Baseline)
+<img width="3840" height="1080" alt="image" src="https://github.com/user-attachments/assets/7f70cd22-25b7-4921-a15b-c2cbf0b564eb" /># 📊 Projeto Integrador: Análise de Desempenho (Baseline)
 
 Este repositório contém o desenvolvimento da **Fase I** do Projeto Integrador, focado na criação de uma base experimental para análise de algoritmos de busca sequencial.
 
@@ -42,3 +42,22 @@ O projeto seguirá um protocolo rigoroso de testes:
 gcc main.c -o projeto
 ./projeto
 ```
+
+## 🚀 Fase II - Tabela Hash com Encadeamento
+
+Nesta segunda fase, otimizamos o motor de buscas utilizando uma **Tabela Hash** com tratamento de colisões por **Lista Encadeada**. O protocolo experimental utilizou os mesmos 1.000 IDs gerados na Fase I para garantir a paridade dos testes.
+
+### 📊 Resultados Quantitativos
+* **Tamanho da Tabela:** 400.010
+* **Total de Colisões:** 174.464
+
+### ⏱️ Tabela Comparativa de Desempenho (Média de 3 Ciclos)
+
+| Cenário de Busca | Busca Sequencial $O(N)$ | Tabela Hash $O(1)$ | Eficiência |
+| :--- | :--- | :--- | :--- |
+| **Busca Início** | 0.000005 s | 0.000000 s | Absoluta |
+| **Busca Meio** | 0.543827 s | 0.000000 s | > 99.9% de redução |
+| **Busca Fim** | 2.570043 s | 0.000000 s | > 99.9% de redução |
+| **Inexistente** | 2.513655 s | 0.000000 s | > 99.9% de redução |
+
+Os resultados comprovam empiricamente a mudança da complexidade de $O(N)$ para $O(1)$, eliminando o gargalo de processamento no pior caso.
