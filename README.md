@@ -1,5 +1,3 @@
-<img width="3840" height="1080" alt="image" src="https://github.com/user-attachments/assets/7f70cd22-25b7-4921-a15b-c2cbf0b564eb" /># 📊 Projeto Integrador: Análise de Desempenho (Baseline)
-
 Este repositório contém o desenvolvimento da **Fase I** do Projeto Integrador, focado na criação de uma base experimental para análise de algoritmos de busca sequencial.
 
 > **Status do Projeto:** 🛠️ Em desenvolvimento (Fase de Modelagem e Carga) 
